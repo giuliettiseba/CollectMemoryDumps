@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(main));
             this.listBoxMilestoneProcesses = new System.Windows.Forms.ListBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.radioButton9 = new System.Windows.Forms.RadioButton();
@@ -56,7 +57,7 @@
             this.listBoxMilestoneProcesses.Name = "listBoxMilestoneProcesses";
             this.listBoxMilestoneProcesses.Size = new System.Drawing.Size(263, 301);
             this.listBoxMilestoneProcesses.TabIndex = 0;
-            this.listBoxMilestoneProcesses.SelectedIndexChanged += new System.EventHandler(this.listBox_MilestoneProcesses_SelectedIndexChanged);
+            this.listBoxMilestoneProcesses.SelectedIndexChanged += new System.EventHandler(this.ListBox_MilestoneProcesses_SelectedIndexChanged);
             // 
             // groupBox1
             // 
@@ -111,9 +112,9 @@
             this.radioButton6.AutoSize = true;
             this.radioButton6.Location = new System.Drawing.Point(6, 134);
             this.radioButton6.Name = "radioButton6";
-            this.radioButton6.Size = new System.Drawing.Size(104, 17);
+            this.radioButton6.Size = new System.Drawing.Size(101, 17);
             this.radioButton6.TabIndex = 14;
-            this.radioButton6.Text = "After 30 minutes ";
+            this.radioButton6.Text = "After 30 minutes";
             this.radioButton6.UseVisualStyleBackColor = true;
             // 
             // radioButton4
@@ -121,9 +122,9 @@
             this.radioButton4.AutoSize = true;
             this.radioButton4.Location = new System.Drawing.Point(6, 111);
             this.radioButton4.Name = "radioButton4";
-            this.radioButton4.Size = new System.Drawing.Size(104, 17);
+            this.radioButton4.Size = new System.Drawing.Size(101, 17);
             this.radioButton4.TabIndex = 15;
-            this.radioButton4.Text = "After 10 minutes ";
+            this.radioButton4.Text = "After 10 minutes";
             this.radioButton4.UseVisualStyleBackColor = true;
             // 
             // radioButton5
@@ -189,7 +190,7 @@
             this.button1.TabIndex = 17;
             this.button1.Text = "Collect";
             this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click_1);
+            this.button1.Click += new System.EventHandler(this.Button_Collect_Clicked);
             // 
             // flowLayoutPanel1
             // 
@@ -221,8 +222,9 @@
             this.Controls.Add(this.textBox_Output);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.listBoxMilestoneProcesses);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "main";
-            this.Text = "Form1";
+            this.Text = "CollectMemoryDumps";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.main_FormClosing);
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();

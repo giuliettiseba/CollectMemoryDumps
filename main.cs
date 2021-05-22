@@ -23,26 +23,25 @@ namespace CollectMemoryDumps
         private string selectedProcess;
 
         String[] milestoneProcesses = {
-                                    "VideoOS.Recorder.Service.TrayController",
-                                    "VideoOS.LogServer",
                                     "VideoOS.Administration",
-                                    "VideoOS.Server.Service",
-                                    "VideoOS.Event.Server.TrayController",
-                                    "VideoOS.Server.Service.TrayController",
-                                    "VideoOS.OnvifGateway.OnvifServer",
-                                    "VideoOS.Recorder.Service",
-                                    "VideoOS.Administration",
-                                    "VideoOS.Server.Service.TrayController",
-                                    "VideoOS.OnvifGateway.RtspServer",
-                                    "VideoOS.OnvifGateway.TrayManager",
-                                    "VideoOS.Administration",
-                                    "VideoOS.MobileServer.TrayController",
-                                    "VideoOS.MobileServer.TrayController",
                                     "VideoOS.DataCollector.Service",
-                                    "VideoOS.Recorder.Service.TrayController",
-                                    "VideoOS.MobileServer.Service",
                                     "VideoOS.Event.Server",
+                                    "VideoOS.LogServer",
+                                    "VideoOS.MobileServer.Service",
+                                    "VideoOS.Recorder.Service",
+                                    "VideoOS.Server.Service",
+
+                                    "VideoOS.OnvifGateway.OnvifServer",
+                                    "VideoOS.OnvifGateway.RtspServer",
+
                                     "VideoOS.Event.Server.TrayController",
+                                    "VideoOS.MobileServer.TrayController",
+                                    "VideoOS.Recorder.Service.TrayController",
+                                    "VideoOS.Server.Service.TrayController",
+                                    "VideoOS.OnvifGateway.TrayManager",
+
+
+
                                      };
 
 
@@ -53,15 +52,12 @@ namespace CollectMemoryDumps
 
             InitializeComponent();
             ShowMilestoneProcesses();
-            //           ShowRunningProcesses();       // Dump live process 
-
-
 
         }
 
         private Panel AddPanel(Process _myProcess)
         {
-
+         
             System.Windows.Forms.Panel panel1 = new System.Windows.Forms.Panel();
             System.Windows.Forms.TextBox textBox1 = new System.Windows.Forms.TextBox();
             System.Windows.Forms.Label label1 = new System.Windows.Forms.Label();
@@ -89,6 +85,7 @@ namespace CollectMemoryDumps
             label1.Name = "Process";
             label1.Size = new System.Drawing.Size(35, 13);
             label1.TabIndex = 1;
+            if (!_myProcess.HasExited)
             label1.Text = _myProcess.ProcessName;
 
 
@@ -104,6 +101,57 @@ namespace CollectMemoryDumps
 
         }
 
+
+
+
+
+        private Panel AddTimerPanel(Process _myProcess)
+        {
+
+            System.Windows.Forms.Panel panel1 = new System.Windows.Forms.Panel();
+            System.Windows.Forms.TextBox textBox1 = new System.Windows.Forms.TextBox();
+            System.Windows.Forms.Label label1 = new System.Windows.Forms.Label();
+            // 
+            // panel1
+            // 
+            panel1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            panel1.Location = new System.Drawing.Point(353, 44);
+            panel1.Name = _myProcess.Id.ToString();
+            panel1.Size = new System.Drawing.Size(480, 35);
+            panel1.TabIndex = 1;
+            // 
+            // textBox1
+            // 
+            textBox1.Location = new System.Drawing.Point(300, 6);
+            textBox1.Name = "TextBox";
+            textBox1.Text = "0";
+            textBox1.Size = new System.Drawing.Size(400, 20);
+            textBox1.TabIndex = 0;
+            // 
+            // label1
+            // 
+            label1.AutoSize = true;
+            label1.Location = new System.Drawing.Point(14, 9);
+            label1.Name = "Timer";
+            label1.Size = new System.Drawing.Size(280, 13);
+            label1.TabIndex = 1;
+            label1.Text = "Timer: " + _myProcess.ProcessName;
+
+
+            panel1.ResumeLayout(false);
+            panel1.PerformLayout();
+            ResumeLayout(false);
+
+            panel1.Controls.Add(label1);
+            panel1.Controls.Add(textBox1);
+
+            AddPanelSafe(panel1);
+            return panel1;
+
+        }
+
+
+
         private void ShowMilestoneProcesses()
         {
             foreach (String item in milestoneProcesses)
@@ -114,28 +162,15 @@ namespace CollectMemoryDumps
         }
 
 
-
-        private void listBox_processes_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            // TODO: Select a live process 
-
-            // selectedProcess = (Process)listBox_MilestoneProcesses.SelectedItem;
-            //textBox1.Text = selectedProcess.ProcessName;
-            //            selectedProcess.
-
-        }
-
-
-
-        private void listBox_MilestoneProcesses_SelectedIndexChanged(object sender, EventArgs e)
+        private void ListBox_MilestoneProcesses_SelectedIndexChanged(object sender, EventArgs e)
         {
             selectedProcess = (String)listBoxMilestoneProcesses.SelectedItem;
         }
 
 
-        private void button1_Click_1(object sender, EventArgs e)
+        private void Button_Collect_Clicked(object sender, EventArgs e)
         {
-            textBox_Output.Text += "Starting..." + Environment.NewLine;
+            //  textBox_Output.Text += "Starting..." + Environment.NewLine;
 
             String _selection = "";
             foreach (RadioButton r in groupBox1.Controls)
@@ -165,11 +200,13 @@ namespace CollectMemoryDumps
                     break;
 
                 case "After 10 minutes":
-                    _selectionMade = RunTimer(10); ;
+                    RunTimer(selectedProcess, 10);
+                    _selectionMade = "runTimer";
                     break;
 
                 case "After 30 minutes":
-                    _selectionMade = RunTimer(10); ;
+                    RunTimer(selectedProcess, 30);
+                    _selectionMade = "runTimer";
                     break;
 
                 case "CPU 50%":
@@ -187,14 +224,14 @@ namespace CollectMemoryDumps
                 default:
                     throw new Exception("switch _selection fail: _selection: " + _selection);
                     //break;
+
             }
 
-
-            String[] arguments = { _selectionMade, " -w " + selectedProcess + ".exe" };
-
-
-            CallProcdum(arguments);
-
+            if (_selectionMade != "runTimer")
+            {
+                String[] arguments = { _selectionMade, " -w " + selectedProcess + ".exe" };
+                CallProcdum(arguments);
+            }
 
         }
 
@@ -208,7 +245,7 @@ namespace CollectMemoryDumps
 
                 var myProcess = new System.Diagnostics.Process();
                 myProcess.StartInfo.FileName = procdump_fileName;
-                myProcess.StartInfo.Arguments = _arguments[0] + ' ' + _arguments[1];
+                myProcess.StartInfo.Arguments = "-accepteula " + _arguments[0] + ' ' + _arguments[1];
 
                 myProcess.StartInfo.UseShellExecute = false;
                 myProcess.StartInfo.RedirectStandardOutput = true;
@@ -239,20 +276,60 @@ namespace CollectMemoryDumps
             {
                 if (!myProcess.HasExited)
                 {
-                    // continuos whatch of the procdump procress. 
+                    // continuos watch of the procdump procress. 
                 }
 
             } while (!myProcess.WaitForExit(1000));
 
-
-
-
             Process[] localByName = Process.GetProcessesByName(StripTargetProcess(myProcess.StartInfo.Arguments));              /// get the target processs. 
-
             ProcessThreadReport(localByName.FirstOrDefault());
 
-
             DeletePanelSafe(_panel);
+        }
+
+
+
+
+
+
+        private void RunTimer(string _selectedProcess, int v)
+        {
+            Task t = new Task(() => StartTimer(_selectedProcess, v));
+            t.Start();
+        }
+
+        private void StartTimer(string _selectedProcess, int v) // v = minutes 
+        {
+
+            Process myProcess = Process.GetProcessesByName(_selectedProcess).FirstOrDefault();
+            
+
+            if (myProcess != null && !myProcess.HasExited)
+            {
+                // PrintOutput("Start" + DateTime.Now.ToString("yyMMdd_HHmmss"));
+
+                Panel _timerPanel = AddTimerPanel(myProcess);
+                DateTime now = DateTime.Now;
+                while (((v * 60) - (DateTime.Now.Subtract(now).Seconds + DateTime.Now.Subtract(now).Minutes * 60 + DateTime.Now.Subtract(now).Hours * 60 * 60)) > 0)
+                {
+                    // _timerPanel.Controls["TextBox"].Text =
+                    UpdateTimerSafe(_timerPanel, ((v * 60) - (DateTime.Now.Subtract(now).Seconds + DateTime.Now.Subtract(now).Minutes * 60 + DateTime.Now.Subtract(now).Hours * 60 * 60)).ToString());
+                    Thread.Sleep(1000);
+                }
+
+                String[] arguments = { "", _selectedProcess + ".exe" };
+                CallProcdum(arguments);
+                DeletePanelSafe(_timerPanel);
+
+                // PrintOutput("End" + DateTime.Now.ToString("yyMMdd_HHmmss"));
+            }
+            else PrintOutput("TIMER DID NOT START - Start the process first");
+
+            
+        }
+
+        private void _CallbackTimer(object state)
+        {
 
         }
 
@@ -264,18 +341,18 @@ namespace CollectMemoryDumps
                 List<Dictionary<string, string>> processTreadInfoList = new List<Dictionary<string, string>>();
                 writer.WriteLine("Id,Total processor time, Responding, Name,Physical memory usage,Base priority, User processor time, Privileged processor time,  Paged system memory size, Paged memory size");
                 String[] _processInfo = {
-                    _myProcess.Id.ToString(),
-                    _myProcess.TotalProcessorTime.ToString(),
-                    _myProcess.Responding.ToString(),
-                    _myProcess.ProcessName,
-                    _myProcess.WorkingSet64.ToString(),
-                    _myProcess.BasePriority.ToString(),
-                    _myProcess.PriorityClass.ToString(),
-                    _myProcess.UserProcessorTime.ToString(),
-                    _myProcess.PrivilegedProcessorTime.ToString(),
-                    _myProcess.PagedSystemMemorySize64.ToString(),
-                    _myProcess.PagedMemorySize64.ToString(),
-                    };
+                  _myProcess.Id.ToString(),
+                  _myProcess.TotalProcessorTime.ToString(),
+                  _myProcess.Responding.ToString(),
+                  _myProcess.ProcessName,
+                  _myProcess.WorkingSet64.ToString(),
+                  _myProcess.BasePriority.ToString(),
+                  _myProcess.PriorityClass.ToString(),
+                  _myProcess.UserProcessorTime.ToString(),
+                  _myProcess.PrivilegedProcessorTime.ToString(),
+                  _myProcess.PagedSystemMemorySize64.ToString(),
+                  _myProcess.PagedMemorySize64.ToString(),
+                  };
                 writer.WriteLine(String.Join(",", _processInfo));
                 /* 
                 writer.WriteLine($"----------------------------------------------------------");
@@ -292,7 +369,7 @@ namespace CollectMemoryDumps
                 */
 
                 List<String[]> _threadInfoList = new List<string[]>();
-                
+
                 writer.WriteLine("ID, TotalProcessorTime(sec),ThreadState, WaitReason,StartAddress ");
                 foreach (ProcessThread _processThread in _myProcess.Threads)
                 {
@@ -324,7 +401,7 @@ namespace CollectMemoryDumps
                 {
                     writer.WriteLine(String.Join(",", _threadInfo));
                 }
-        
+
             }
         }
 
@@ -342,23 +419,12 @@ namespace CollectMemoryDumps
             return arguments.Substring(startCutting, endCutting);
         }
 
-        void p_OutputDataReceived(object sender, DataReceivedEventArgs e)
+
+        /*Auxiliary handler for the memorydump process.*/
+        private void p_OutputDataReceived(object sender, DataReceivedEventArgs e)
         {
             PrintOutput(e.Data);
         }
-
-
-        private string RunTimer(int v)
-        {
-
-            // is a live process?
-            // get process
-            // getTimer 
-            // start thread 
-
-            throw new NotImplementedException();
-        }
-
 
 
 
@@ -388,7 +454,7 @@ namespace CollectMemoryDumps
 
         private void AddPanelSafe(Panel _panel)
         {
-            if (this.textBox_Output.InvokeRequired)
+            if (this.flowLayoutPanel1.InvokeRequired)
             {
                 SetPanelCallback d = new SetPanelCallback(AddPanelSafe);
                 this.Invoke(d, new object[] { _panel });
@@ -404,7 +470,7 @@ namespace CollectMemoryDumps
 
         private void DeletePanelSafe(Panel _panel)
         {
-            if (this.textBox_Output.InvokeRequired)
+            if (this.flowLayoutPanel1.InvokeRequired)
             {
                 SetPanelDeleteCallback d = new SetPanelDeleteCallback(DeletePanelSafe);
                 this.Invoke(d, new object[] { _panel });
@@ -415,6 +481,25 @@ namespace CollectMemoryDumps
             }
         }
 
+        
+        delegate void UpdateTimerCallback(Panel _panel, String str );
+
+        private void UpdateTimerSafe(Panel _panel, String str)
+        {
+            if (_panel.InvokeRequired)
+            {
+                UpdateTimerCallback d = new UpdateTimerCallback(UpdateTimerSafe);
+                this.Invoke(d, new object[] { _panel , str});
+            }
+            else
+            {
+                _panel.Controls["TextBox"].Text = str;
+            }
+        }
+
+
+
+
         private void main_FormClosing(object sender, FormClosingEventArgs e)
         {
             foreach (Process proc in runningProcess)
@@ -424,6 +509,10 @@ namespace CollectMemoryDumps
 
             }
         }
+
+
+
+
 
 
     }
