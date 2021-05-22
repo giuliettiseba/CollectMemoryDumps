@@ -1,0 +1,11 @@
+C:\Users\sgiu\source\repos\CollectMemoryDumps\CollectMemoryDumps\bin\Release\procdump.exe
+C:\Users\sgiu\source\repos\CollectMemoryDumps\CollectMemoryDumps\bin\Release\CollectMemoryDumps.exe.config
+C:\Users\sgiu\source\repos\CollectMemoryDumps\CollectMemoryDumps\bin\Release\CollectMemoryDumps.exe
+C:\Users\sgiu\source\repos\CollectMemoryDumps\CollectMemoryDumps\bin\Release\CollectMemoryDumps.pdb
+C:\Users\sgiu\source\repos\CollectMemoryDumps\CollectMemoryDumps\obj\Release\CollectMemoryDumps.csprojAssemblyReference.cache
+C:\Users\sgiu\source\repos\CollectMemoryDumps\CollectMemoryDumps\obj\Release\CollectMemoryDumps.main.resources
+C:\Users\sgiu\source\repos\CollectMemoryDumps\CollectMemoryDumps\obj\Release\CollectMemoryDumps.Properties.Resources.resources
+C:\Users\sgiu\source\repos\CollectMemoryDumps\CollectMemoryDumps\obj\Release\CollectMemoryDumps.csproj.GenerateResource.cache
+C:\Users\sgiu\source\repos\CollectMemoryDumps\CollectMemoryDumps\obj\Release\CollectMemoryDumps.csproj.CoreCompileInputs.cache
+C:\Users\sgiu\source\repos\CollectMemoryDumps\CollectMemoryDumps\obj\Release\CollectMemoryDumps.exe
+C:\Users\sgiu\source\repos\CollectMemoryDumps\CollectMemoryDumps\obj\Release\CollectMemoryDumps.pdb

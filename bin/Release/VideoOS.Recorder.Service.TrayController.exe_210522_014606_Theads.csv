@@ -1,0 +1,18 @@
+
+Id,Total processor time, Responding, Name,Physical memory usage,Base priority, User processor time, Privileged processor time,  Paged system memory size, Paged memory size
+32496,04:04:19.5312500,True,VideoOS.Recorder.Service.TrayController,43487232,8,Normal,04:03:44.6406250,00:00:34.9687500,409888,16011264
+ID, TotalProcessorTime(sec),ThreadState, WaitReason,StartAddress 
+21328,00:30:39.2656250,Wait,ExecutionDelay,439625264
+20144,00:30:37.4062500,Wait,ExecutionDelay,439625264
+11036,00:30:35.1093750,Wait,ExecutionDelay,439625264
+22856,00:30:34.1875000,Wait,ExecutionDelay,439625264
+19020,00:30:29.9375000,Wait,ExecutionDelay,439625264
+3832,00:30:28.9843750,Wait,ExecutionDelay,439625264
+13916,00:30:26.8906250,Wait,ExecutionDelay,439625264
+2628,00:30:25.7500000,Wait,ExecutionDelay,439625264
+27592,00:00:02.0468750,Wait,UserRequest,439625264
+30152,00:00:00.0156250,Wait,UserRequest,439625264
+2392,00:00:00,Wait,UserRequest,439625264
+22412,00:00:00,Wait,UserRequest,439625264
+30624,00:00:00,Wait,EventPairLow,439625264
+24988,00:00:00,Wait,EventPairLow,439625264
