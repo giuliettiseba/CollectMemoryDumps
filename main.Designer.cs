@@ -30,7 +30,7 @@
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(main));
             this.listBoxMilestoneProcesses = new System.Windows.Forms.ListBox();
-            this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.groupBox_Options = new System.Windows.Forms.GroupBox();
             this.radioButton9 = new System.Windows.Forms.RadioButton();
             this.radioButton8 = new System.Windows.Forms.RadioButton();
             this.radioButton7 = new System.Windows.Forms.RadioButton();
@@ -44,7 +44,11 @@
             this.button1 = new System.Windows.Forms.Button();
             this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
             this.label1 = new System.Windows.Forms.Label();
-            this.groupBox1.SuspendLayout();
+            this.textBox_PID = new System.Windows.Forms.TextBox();
+            this.labelPid = new System.Windows.Forms.Label();
+            this.radioButton10 = new System.Windows.Forms.RadioButton();
+            this.textBox_CustomArguments = new System.Windows.Forms.TextBox();
+            this.groupBox_Options.SuspendLayout();
             this.SuspendLayout();
             // 
             // listBoxMilestoneProcesses
@@ -55,32 +59,35 @@
             this.listBoxMilestoneProcesses.FormattingEnabled = true;
             this.listBoxMilestoneProcesses.Location = new System.Drawing.Point(12, 12);
             this.listBoxMilestoneProcesses.Name = "listBoxMilestoneProcesses";
-            this.listBoxMilestoneProcesses.Size = new System.Drawing.Size(263, 301);
+            this.listBoxMilestoneProcesses.Size = new System.Drawing.Size(263, 275);
             this.listBoxMilestoneProcesses.TabIndex = 0;
             this.listBoxMilestoneProcesses.SelectedIndexChanged += new System.EventHandler(this.ListBox_MilestoneProcesses_SelectedIndexChanged);
+            this.listBoxMilestoneProcesses.Enter += new System.EventHandler(this.listBoxMilestoneProcesses_Enter);
             // 
-            // groupBox1
+            // groupBox_Options
             // 
-            this.groupBox1.Controls.Add(this.radioButton9);
-            this.groupBox1.Controls.Add(this.radioButton8);
-            this.groupBox1.Controls.Add(this.radioButton7);
-            this.groupBox1.Controls.Add(this.radioButton6);
-            this.groupBox1.Controls.Add(this.radioButton4);
-            this.groupBox1.Controls.Add(this.radioButton5);
-            this.groupBox1.Controls.Add(this.radioButton3);
-            this.groupBox1.Controls.Add(this.radioButton2);
-            this.groupBox1.Controls.Add(this.radioButton1);
-            this.groupBox1.Location = new System.Drawing.Point(12, 319);
-            this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(263, 234);
-            this.groupBox1.TabIndex = 5;
-            this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "Options";
+            this.groupBox_Options.Controls.Add(this.textBox_CustomArguments);
+            this.groupBox_Options.Controls.Add(this.radioButton9);
+            this.groupBox_Options.Controls.Add(this.radioButton8);
+            this.groupBox_Options.Controls.Add(this.radioButton10);
+            this.groupBox_Options.Controls.Add(this.radioButton7);
+            this.groupBox_Options.Controls.Add(this.radioButton6);
+            this.groupBox_Options.Controls.Add(this.radioButton4);
+            this.groupBox_Options.Controls.Add(this.radioButton5);
+            this.groupBox_Options.Controls.Add(this.radioButton3);
+            this.groupBox_Options.Controls.Add(this.radioButton2);
+            this.groupBox_Options.Controls.Add(this.radioButton1);
+            this.groupBox_Options.Location = new System.Drawing.Point(12, 319);
+            this.groupBox_Options.Name = "groupBox_Options";
+            this.groupBox_Options.Size = new System.Drawing.Size(263, 234);
+            this.groupBox_Options.TabIndex = 5;
+            this.groupBox_Options.TabStop = false;
+            this.groupBox_Options.Text = "Options";
             // 
             // radioButton9
             // 
             this.radioButton9.AutoSize = true;
-            this.radioButton9.Location = new System.Drawing.Point(6, 203);
+            this.radioButton9.Location = new System.Drawing.Point(187, 106);
             this.radioButton9.Name = "radioButton9";
             this.radioButton9.Size = new System.Drawing.Size(70, 17);
             this.radioButton9.TabIndex = 11;
@@ -90,7 +97,7 @@
             // radioButton8
             // 
             this.radioButton8.AutoSize = true;
-            this.radioButton8.Location = new System.Drawing.Point(6, 180);
+            this.radioButton8.Location = new System.Drawing.Point(94, 106);
             this.radioButton8.Name = "radioButton8";
             this.radioButton8.Size = new System.Drawing.Size(70, 17);
             this.radioButton8.TabIndex = 12;
@@ -100,7 +107,7 @@
             // radioButton7
             // 
             this.radioButton7.AutoSize = true;
-            this.radioButton7.Location = new System.Drawing.Point(6, 157);
+            this.radioButton7.Location = new System.Drawing.Point(6, 106);
             this.radioButton7.Name = "radioButton7";
             this.radioButton7.Size = new System.Drawing.Size(70, 17);
             this.radioButton7.TabIndex = 13;
@@ -110,7 +117,7 @@
             // radioButton6
             // 
             this.radioButton6.AutoSize = true;
-            this.radioButton6.Location = new System.Drawing.Point(6, 134);
+            this.radioButton6.Location = new System.Drawing.Point(150, 77);
             this.radioButton6.Name = "radioButton6";
             this.radioButton6.Size = new System.Drawing.Size(101, 17);
             this.radioButton6.TabIndex = 14;
@@ -120,7 +127,7 @@
             // radioButton4
             // 
             this.radioButton4.AutoSize = true;
-            this.radioButton4.Location = new System.Drawing.Point(6, 111);
+            this.radioButton4.Location = new System.Drawing.Point(6, 77);
             this.radioButton4.Name = "radioButton4";
             this.radioButton4.Size = new System.Drawing.Size(101, 17);
             this.radioButton4.TabIndex = 15;
@@ -130,7 +137,7 @@
             // radioButton5
             // 
             this.radioButton5.AutoSize = true;
-            this.radioButton5.Location = new System.Drawing.Point(6, 88);
+            this.radioButton5.Location = new System.Drawing.Point(150, 48);
             this.radioButton5.Name = "radioButton5";
             this.radioButton5.Size = new System.Drawing.Size(107, 17);
             this.radioButton5.TabIndex = 10;
@@ -140,7 +147,7 @@
             // radioButton3
             // 
             this.radioButton3.AutoSize = true;
-            this.radioButton3.Location = new System.Drawing.Point(6, 65);
+            this.radioButton3.Location = new System.Drawing.Point(6, 48);
             this.radioButton3.Name = "radioButton3";
             this.radioButton3.Size = new System.Drawing.Size(101, 17);
             this.radioButton3.TabIndex = 9;
@@ -150,7 +157,7 @@
             // radioButton2
             // 
             this.radioButton2.AutoSize = true;
-            this.radioButton2.Location = new System.Drawing.Point(6, 42);
+            this.radioButton2.Location = new System.Drawing.Point(150, 19);
             this.radioButton2.Name = "radioButton2";
             this.radioButton2.Size = new System.Drawing.Size(72, 17);
             this.radioButton2.TabIndex = 8;
@@ -210,24 +217,65 @@
             this.label1.TabIndex = 19;
             this.label1.Text = "Waiting procdump instances";
             // 
+            // textBox_PID
+            // 
+            this.textBox_PID.BackColor = System.Drawing.Color.Black;
+            this.textBox_PID.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(192)))), ((int)(((byte)(0)))));
+            this.textBox_PID.Location = new System.Drawing.Point(52, 293);
+            this.textBox_PID.Name = "textBox_PID";
+            this.textBox_PID.Size = new System.Drawing.Size(223, 20);
+            this.textBox_PID.TabIndex = 20;
+            this.textBox_PID.Enter += new System.EventHandler(this.textBox_PID_Enter);
+            // 
+            // labelPid
+            // 
+            this.labelPid.AutoSize = true;
+            this.labelPid.Location = new System.Drawing.Point(15, 296);
+            this.labelPid.Name = "labelPid";
+            this.labelPid.Size = new System.Drawing.Size(31, 13);
+            this.labelPid.TabIndex = 21;
+            this.labelPid.Text = "PID: ";
+            // 
+            // radioButton10
+            // 
+            this.radioButton10.AutoSize = true;
+            this.radioButton10.Location = new System.Drawing.Point(6, 135);
+            this.radioButton10.Name = "radioButton10";
+            this.radioButton10.Size = new System.Drawing.Size(113, 17);
+            this.radioButton10.TabIndex = 13;
+            this.radioButton10.Text = "Custom Arguments";
+            this.radioButton10.UseVisualStyleBackColor = true;
+            // 
+            // textBox_CustomArguments
+            // 
+            this.textBox_CustomArguments.BackColor = System.Drawing.Color.Black;
+            this.textBox_CustomArguments.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(192)))), ((int)(((byte)(0)))));
+            this.textBox_CustomArguments.Location = new System.Drawing.Point(6, 158);
+            this.textBox_CustomArguments.Multiline = true;
+            this.textBox_CustomArguments.Name = "textBox_CustomArguments";
+            this.textBox_CustomArguments.Size = new System.Drawing.Size(251, 69);
+            this.textBox_CustomArguments.TabIndex = 22;
+            // 
             // main
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.DimGray;
             this.ClientSize = new System.Drawing.Size(1428, 592);
+            this.Controls.Add(this.labelPid);
+            this.Controls.Add(this.textBox_PID);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.flowLayoutPanel1);
             this.Controls.Add(this.button1);
             this.Controls.Add(this.textBox_Output);
-            this.Controls.Add(this.groupBox1);
+            this.Controls.Add(this.groupBox_Options);
             this.Controls.Add(this.listBoxMilestoneProcesses);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "main";
             this.Text = "CollectMemoryDumps";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.main_FormClosing);
-            this.groupBox1.ResumeLayout(false);
-            this.groupBox1.PerformLayout();
+            this.groupBox_Options.ResumeLayout(false);
+            this.groupBox_Options.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -235,7 +283,7 @@
 
         #endregion
         private System.Windows.Forms.ListBox listBoxMilestoneProcesses;
-        private System.Windows.Forms.GroupBox groupBox1;
+        private System.Windows.Forms.GroupBox groupBox_Options;
         private System.Windows.Forms.RadioButton radioButton9;
         private System.Windows.Forms.RadioButton radioButton8;
         private System.Windows.Forms.RadioButton radioButton7;
@@ -249,6 +297,10 @@
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel1;
         private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.TextBox textBox_PID;
+        private System.Windows.Forms.Label labelPid;
+        private System.Windows.Forms.RadioButton radioButton10;
+        private System.Windows.Forms.TextBox textBox_CustomArguments;
     }
 }
 

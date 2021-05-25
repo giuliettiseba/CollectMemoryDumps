@@ -16,10 +16,7 @@ namespace CollectMemoryDumps
 {
     public partial class main : Form
     {
-        bool filterMilestone;
 
-        private List<Process> data = new List<Process>();
-        private BindingSource bs = new BindingSource();
         private string selectedProcess;
 
         String[] milestoneProcesses = {
@@ -40,24 +37,211 @@ namespace CollectMemoryDumps
                                     "VideoOS.Server.Service.TrayController",
                                     "VideoOS.OnvifGateway.TrayManager",
 
-
-
                                      };
-
-
-
 
         public main()
         {
 
             InitializeComponent();
             ShowMilestoneProcesses();
+        }
 
+        private void ShowMilestoneProcesses()
+        {
+            foreach (String item in milestoneProcesses)
+            {
+                listBoxMilestoneProcesses.Items.Add(item);
+            }
+            listBoxMilestoneProcesses.SelectedIndex = 0;
+        }
+
+
+        private void ListBox_MilestoneProcesses_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            selectedProcess = (String)listBoxMilestoneProcesses.SelectedItem;
+        }
+
+        private void Button_Collect_Clicked(object sender, EventArgs e)
+        {
+
+            RadioButton r = groupBox_Options.Controls.OfType<RadioButton>()
+                           .FirstOrDefault(n => n.Checked);
+
+            String _selection = r.Text;
+
+            string _selectionMade;
+
+
+            string call_process = "";
+            int out_no;
+            if (textBox_PID.Text != "")
+                if (int.TryParse(textBox_PID.Text, out out_no))
+                    call_process = out_no.ToString();
+                else MessageBox.Show("PID must be a integer number");
+
+            else call_process = " -w " + selectedProcess + ".exe";
+
+            if (call_process != "")
+            {
+
+                switch (_selection)
+                {
+                    case "Instant":
+                        _selectionMade = "";
+                        break;
+
+                    case "Exception":
+                        _selectionMade = "-e 1";
+                        break;
+
+                    case "Memory 500 Mb":
+                        _selectionMade = "-m 500 ";
+                        break;
+
+                    case "Memory 1000 Mb":
+                        _selectionMade = "-m 1000 ";
+                        break;
+
+                    case "After 10 minutes":
+                        RunTimer(call_process, 10);
+                        _selectionMade = "runTimer";
+                        break;
+
+                    case "After 30 minutes":
+                        RunTimer(call_process, 30);
+                        _selectionMade = "runTimer";
+                        break;
+
+                    case "CPU 50%":
+                        _selectionMade = "-c 50 -s 1";
+                        break;
+
+                    case "CPU 75%":
+                        _selectionMade = "-c 70 -s 1";
+                        break;
+
+                    case "CPU 90%":
+                        _selectionMade = "-c 90 -s 1";
+                        break;
+
+                    case "Custom Arguments":
+                        _selectionMade = textBox_CustomArguments.Text;
+                        break;
+                  
+                    default:
+                        throw new Exception("switch _selection fail: _selection: " + _selection);
+                        //break;
+
+                }
+
+                if (_selectionMade != "runTimer")
+                {
+                    String[] arguments = { _selectionMade, call_process };
+                    CallProcdum(arguments);
+                }
+            }
+        }
+
+
+        const string procdump_fileName = "procdump.exe"; // -ma";
+
+        private void CallProcdum(string[] _arguments)
+        {
+            try
+            {
+
+                var myProcess = new System.Diagnostics.Process();
+                myProcess.StartInfo.FileName = procdump_fileName;
+                myProcess.StartInfo.Arguments = "-accepteula " + _arguments[0] + ' ' + _arguments[1];
+
+                myProcess.StartInfo.UseShellExecute = false;
+                myProcess.StartInfo.RedirectStandardOutput = true;
+                myProcess.OutputDataReceived += p_OutputDataReceived;
+                myProcess.StartInfo.CreateNoWindow = true;
+                myProcess.Start();
+
+                Task t = new Task(() => MonitorProcess(myProcess));
+                t.Start();
+
+                myProcess.BeginOutputReadLine();
+
+            }
+            catch (Win32Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+
+        }
+
+        List<Process> runningProcess = new List<Process>();
+        private void MonitorProcess(Process myProcess)
+        {
+            runningProcess.Add(myProcess);
+            Panel _panel = AddPanel(myProcess);
+            do
+            {
+                if (!myProcess.HasExited)
+                {
+                    // continuos watch of the procdump procress. 
+                }
+
+            } while (!myProcess.WaitForExit(1000));
+
+            // is PID or name
+            int _pid = 0;
+            Process myStartedProcess;
+            if (int.TryParse(StripTargetProcess(myProcess.StartInfo.Arguments), out _pid))
+                myStartedProcess = Process.GetProcessById(_pid);
+            else
+            {
+                Process[] localByName = Process.GetProcessesByName(StripTargetProcess(myProcess.StartInfo.Arguments));              /// get the target processs. 
+                myStartedProcess = localByName.FirstOrDefault();
+            }
+            if (myStartedProcess != null)
+
+                ProcessThreadReport(myStartedProcess);
+
+            DeletePanelSafe(_panel);
+        }
+
+        private void RunTimer(string _selectedProcess, int v)
+        {
+            Task t = new Task(() => StartTimer(_selectedProcess, v));
+            t.Start();
+        }
+
+        private void StartTimer(string _selectedProcess, int v) // v = minutes 
+        {
+
+            Process myProcess = _selectedProcess.Contains(".exe") ?
+                Process.GetProcessesByName(_selectedProcess.Substring(0, _selectedProcess.LastIndexOf(".exe"))).FirstOrDefault() :
+                Process.GetProcessById(int.Parse(_selectedProcess));
+
+            if (myProcess != null && !myProcess.HasExited)
+            {
+                // PrintOutput("Start" + DateTime.Now.ToString("yyMMdd_HHmmss"));
+
+                Panel _timerPanel = AddTimerPanel(myProcess);
+                DateTime now = DateTime.Now;
+                while (((v * 60) - (DateTime.Now.Subtract(now).Seconds + DateTime.Now.Subtract(now).Minutes * 60 + DateTime.Now.Subtract(now).Hours * 60 * 60)) > 0)
+                {
+                    // _timerPanel.Controls["TextBox"].Text =
+                    UpdateTimerSafe(_timerPanel, ((v * 60) - (DateTime.Now.Subtract(now).Seconds + DateTime.Now.Subtract(now).Minutes * 60 + DateTime.Now.Subtract(now).Hours * 60 * 60)).ToString());
+                    Thread.Sleep(1000);
+                }
+
+                String[] arguments = { "", _selectedProcess + ".exe" };
+                CallProcdum(arguments);
+                DeletePanelSafe(_timerPanel);
+
+                // PrintOutput("End" + DateTime.Now.ToString("yyMMdd_HHmmss"));
+            }
+            else PrintOutput("TIMER DID NOT START - Start the process first");
         }
 
         private Panel AddPanel(Process _myProcess)
         {
-         
+
             System.Windows.Forms.Panel panel1 = new System.Windows.Forms.Panel();
             System.Windows.Forms.TextBox textBox1 = new System.Windows.Forms.TextBox();
             System.Windows.Forms.Label label1 = new System.Windows.Forms.Label();
@@ -86,7 +270,7 @@ namespace CollectMemoryDumps
             label1.Size = new System.Drawing.Size(35, 13);
             label1.TabIndex = 1;
             if (!_myProcess.HasExited)
-            label1.Text = _myProcess.ProcessName;
+                label1.Text = _myProcess.ProcessName;
 
 
             panel1.ResumeLayout(false);
@@ -100,9 +284,6 @@ namespace CollectMemoryDumps
             return panel1;
 
         }
-
-
-
 
 
         private Panel AddTimerPanel(Process _myProcess)
@@ -151,191 +332,11 @@ namespace CollectMemoryDumps
         }
 
 
-
-        private void ShowMilestoneProcesses()
-        {
-            foreach (String item in milestoneProcesses)
-            {
-                listBoxMilestoneProcesses.Items.Add(item);
-            }
-            listBoxMilestoneProcesses.SelectedIndex = 0;
-        }
-
-
-        private void ListBox_MilestoneProcesses_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            selectedProcess = (String)listBoxMilestoneProcesses.SelectedItem;
-        }
-
-
-        private void Button_Collect_Clicked(object sender, EventArgs e)
-        {
-            //  textBox_Output.Text += "Starting..." + Environment.NewLine;
-
-            String _selection = "";
-            foreach (RadioButton r in groupBox1.Controls)
-            {
-                if (r.Checked)
-                    _selection = r.Text;
-            }
-
-            string _selectionMade;
-
-            switch (_selection)
-            {
-                case "Instant":
-                    _selectionMade = "";
-                    break;
-
-                case "Exception":
-                    _selectionMade = "-e 1";
-                    break;
-
-                case "Memory 500 Mb":
-                    _selectionMade = "-m 500 ";
-                    break;
-
-                case "Memory 1000 Mb":
-                    _selectionMade = "-m 1000 ";
-                    break;
-
-                case "After 10 minutes":
-                    RunTimer(selectedProcess, 10);
-                    _selectionMade = "runTimer";
-                    break;
-
-                case "After 30 minutes":
-                    RunTimer(selectedProcess, 30);
-                    _selectionMade = "runTimer";
-                    break;
-
-                case "CPU 50%":
-                    _selectionMade = "-c 50 -s 1";
-                    break;
-
-                case "CPU 75%":
-                    _selectionMade = "-c 70 -s 1";
-                    break;
-
-                case "CPU 90%":
-                    _selectionMade = "-c 90 -s 1";
-                    break;
-
-                default:
-                    throw new Exception("switch _selection fail: _selection: " + _selection);
-                    //break;
-
-            }
-
-            if (_selectionMade != "runTimer")
-            {
-                String[] arguments = { _selectionMade, " -w " + selectedProcess + ".exe" };
-                CallProcdum(arguments);
-            }
-
-        }
-
-
-        const string procdump_fileName = "procdump.exe"; // -ma";
-
-        private void CallProcdum(string[] _arguments)
-        {
-            try
-            {
-
-                var myProcess = new System.Diagnostics.Process();
-                myProcess.StartInfo.FileName = procdump_fileName;
-                myProcess.StartInfo.Arguments = "-accepteula " + _arguments[0] + ' ' + _arguments[1];
-
-                myProcess.StartInfo.UseShellExecute = false;
-                myProcess.StartInfo.RedirectStandardOutput = true;
-                myProcess.OutputDataReceived += p_OutputDataReceived;
-                myProcess.StartInfo.CreateNoWindow = true;
-                myProcess.Start();
-
-                Task t = new Task(() => MonitorProcess(myProcess));
-                t.Start();
-
-                myProcess.BeginOutputReadLine();
-
-            }
-            catch (Win32Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-            }
-
-        }
-
-
-        List<Process> runningProcess = new List<Process>();
-        private void MonitorProcess(Process myProcess)
-        {
-            runningProcess.Add(myProcess);
-            Panel _panel = AddPanel(myProcess);
-            do
-            {
-                if (!myProcess.HasExited)
-                {
-                    // continuos watch of the procdump procress. 
-                }
-
-            } while (!myProcess.WaitForExit(1000));
-
-            Process[] localByName = Process.GetProcessesByName(StripTargetProcess(myProcess.StartInfo.Arguments));              /// get the target processs. 
-            ProcessThreadReport(localByName.FirstOrDefault());
-
-            DeletePanelSafe(_panel);
-        }
-
-
-
-
-
-
-        private void RunTimer(string _selectedProcess, int v)
-        {
-            Task t = new Task(() => StartTimer(_selectedProcess, v));
-            t.Start();
-        }
-
-        private void StartTimer(string _selectedProcess, int v) // v = minutes 
-        {
-
-            Process myProcess = Process.GetProcessesByName(_selectedProcess).FirstOrDefault();
-            
-
-            if (myProcess != null && !myProcess.HasExited)
-            {
-                // PrintOutput("Start" + DateTime.Now.ToString("yyMMdd_HHmmss"));
-
-                Panel _timerPanel = AddTimerPanel(myProcess);
-                DateTime now = DateTime.Now;
-                while (((v * 60) - (DateTime.Now.Subtract(now).Seconds + DateTime.Now.Subtract(now).Minutes * 60 + DateTime.Now.Subtract(now).Hours * 60 * 60)) > 0)
-                {
-                    // _timerPanel.Controls["TextBox"].Text =
-                    UpdateTimerSafe(_timerPanel, ((v * 60) - (DateTime.Now.Subtract(now).Seconds + DateTime.Now.Subtract(now).Minutes * 60 + DateTime.Now.Subtract(now).Hours * 60 * 60)).ToString());
-                    Thread.Sleep(1000);
-                }
-
-                String[] arguments = { "", _selectedProcess + ".exe" };
-                CallProcdum(arguments);
-                DeletePanelSafe(_timerPanel);
-
-                // PrintOutput("End" + DateTime.Now.ToString("yyMMdd_HHmmss"));
-            }
-            else PrintOutput("TIMER DID NOT START - Start the process first");
-
-            
-        }
-
-        private void _CallbackTimer(object state)
-        {
-
-        }
-
         private void ProcessThreadReport(Process _myProcess)
         {
-            using (StreamWriter writer = new StreamWriter(_myProcess.ProcessName + ".exe_" + DateTime.Now.ToString("yyMMdd_HHmmss") + "_Theads.csv"))
+           
+
+            using (StreamWriter writer = new StreamWriter(_myProcess.ProcessName + ".exe_" + DateTime.Now.ToString("yyMMdd_HHmmss_fff") + "_Theads.csv"))
             {
                 writer.WriteLine(_myProcess.StartInfo.FileName);
                 List<Dictionary<string, string>> processTreadInfoList = new List<Dictionary<string, string>>();
@@ -413,9 +414,14 @@ namespace CollectMemoryDumps
         private String StripTargetProcess(string arguments)
         {
             // example -c 90 - s 1 - w VideoOS.Recorder.Service.TrayController.exe
+            // example -c 90 - s 1 - w 1234
 
-            int startCutting = arguments.IndexOf("VideoOS.");
-            int endCutting = arguments.IndexOf(".exe") - startCutting;
+
+            // int startCutting = arguments.IndexOf("VideoOS.");
+
+            int startCutting = arguments.LastIndexOf("-w") + 3;
+            int endCutting = arguments.Contains(".exe") ? arguments.IndexOf(".exe") - startCutting : arguments.Length - startCutting;
+
             return arguments.Substring(startCutting, endCutting);
         }
 
@@ -481,15 +487,15 @@ namespace CollectMemoryDumps
             }
         }
 
-        
-        delegate void UpdateTimerCallback(Panel _panel, String str );
+
+        delegate void UpdateTimerCallback(Panel _panel, String str);
 
         private void UpdateTimerSafe(Panel _panel, String str)
         {
             if (_panel.InvokeRequired)
             {
                 UpdateTimerCallback d = new UpdateTimerCallback(UpdateTimerSafe);
-                this.Invoke(d, new object[] { _panel , str});
+                this.Invoke(d, new object[] { _panel, str });
             }
             else
             {
@@ -510,11 +516,15 @@ namespace CollectMemoryDumps
             }
         }
 
+        private void textBox_PID_Enter(object sender, EventArgs e)
+        {
+            listBoxMilestoneProcesses.ClearSelected();
+        }
 
-
-
-
-
+        private void listBoxMilestoneProcesses_Enter(object sender, EventArgs e)
+        {
+            textBox_PID.Text = "";
+        }
     }
 
 
